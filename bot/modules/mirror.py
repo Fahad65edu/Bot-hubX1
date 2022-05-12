@@ -1,14 +1,16 @@
+
 import requests
-import urllib
-import pathlib
-import os
-import subprocess
-import threading
-import re
-import random
-import string
-import time
-import shutil
+
+from re import match, search, split as resplit
+from time import sleep, time
+from os import path as ospath, remove as osremove, listdir, walk
+from shutil import rmtree
+from threading import Thread
+from subprocess import run as srun
+from pathlib import PurePath
+from urllib.parse import quote
+from telegram.ext import CommandHandler
+from telegram import InlineKeyboardMarkup
 
 from telegram.ext import CommandHandler
 from telegram import InlineKeyboardMarkup
