@@ -6,6 +6,7 @@ import magic
 import tarfile
 import subprocess
 import time
+import ceil
 
 from PIL import Image
 from hachoir.parser import createParser
