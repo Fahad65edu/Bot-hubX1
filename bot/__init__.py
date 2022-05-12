@@ -346,6 +346,11 @@ try:
 except KeyError:
     AS_DOCUMENT = False
 try:
+    EQUAL_SPLITS = getConfig('EQUAL_SPLITS')
+    EQUAL_SPLITS = EQUAL_SPLITS.lower() == 'true'
+except KeyError:
+    EQUAL_SPLITS = False
+try:
     RECURSIVE_SEARCH = getConfig('RECURSIVE_SEARCH')
     RECURSIVE_SEARCH = RECURSIVE_SEARCH.lower() == 'true'
 except KeyError:
