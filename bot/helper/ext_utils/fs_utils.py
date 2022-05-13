@@ -169,29 +169,28 @@ def take_ss(video_file):
     img.save(des_dir, "JPEG")
     return des_dir
 
-def split(path, size, filee, dirpath, split_size, start_time=0, i=1):
+def split(path, size, filee, dirpath, split_size, start_time=0, i=1, inLoop=False):
+    parts = math.ceil(size/TG_SPLIT_SIZE)
+    if EQUAL_SPLITS and not inLoop:
+        split_size = math.ceil(size/parts)
     if filee.upper().endswith(VIDEO_SUFFIXES):
         base_name, extension = os.path.splitext(filee)
-        parts = math.ceil(size/TG_SPLIT_SIZE)
-        if EQUAL_SPLITS:
-            split_size = (size // parts) - 2500000
-        else:
-            split_size = split_size - 2500000
+        split_size = split_size - 2500000
         while i <= parts :
-            parted_name = "{}.part{}{}".format(str(base_name), str(i).zfill(3), str(extension))
+            parted_name = "{}_part{}{}".format(str(base_name), str(i).zfill(3), str(extension))
             out_path = os.path.join(dirpath, parted_name)
-            subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", 
+            subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-i",
                             path, "-ss", str(start_time), "-fs", str(split_size),
                             "-async", "1", "-strict", "-2", "-c", "copy", out_path])
             out_size = get_path_size(out_path)
             if out_size > 2097152000:
-                dif = out_size - TG_SPLIT_SIZE
+                dif = out_size - 2097152000
                 split_size = split_size - dif + 2400000
                 os.remove(out_path)
-                return split(path, size, filee, dirpath, split_size, start_time, i)
+                return split(path, size, filee, dirpath, split_size, start_time, i, inLoop=True)
             lpd = get_media_info(out_path)[0]
             start_time += lpd - 3
             i = i + 1
     else:
-        out_path = os.path.join(dirpath, filee + ".")
+        out_path = os.path.join(dirpath, filee + "_")
         subprocess.run(["split", "--numeric-suffixes=1", "--suffix-length=3", f"--bytes={split_size}", path, out_path])
